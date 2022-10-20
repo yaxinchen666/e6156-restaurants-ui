@@ -6,7 +6,6 @@ import Restaurants from './components/Restaurants';
 function App() {
   return (
     <div className="App">
-      Hello world
       <Routes>
         <Route path="/" element={<Restaurants />} />
       </Routes>
