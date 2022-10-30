@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import axios from 'axios';
-import Card from 'react-bootstrap/Card';
-import ReactPaginate from 'react-paginate';
+
 import { Container } from 'react-bootstrap';
+import Pagination from './Pagination';
 
 const Restaurants = () => {
     const [restaurants, setRestaurants] = useState([
@@ -23,7 +23,19 @@ const Restaurants = () => {
         'rest_name': 'Carnegie Diner & Cafe',
         'rest_location':  '205 W 57th St, New York, NY 10019',
         'rest_size': 20
-      }
+      },
+      {
+        'rest_id': 4,
+        'rest_name': 'Mulligan\'s Pub',
+        'rest_location': '159 1st St, Hoboken, NJ 07030',
+        'rest_size': 30
+      },
+      {
+        'rest_id': 5,
+        'rest_name': 'Mills Tavern',
+        'rest_location': '125 Washington St, Hoboken, NJ 07030',
+        'rest_size': 25
+      },
     ])
 
   // useEffect(() => {
@@ -46,19 +58,8 @@ const Restaurants = () => {
   } else {
     return (
         <Container>
-        {restaurants.map(rest => {
-            return (
-            <Card style={{ 'margin-bottom': '20px' }}>
-                <Card.Header as="h5">{rest.rest_name}</Card.Header>
-                <Card.Body>
-                    <Card.Text>{rest.rest_location}</Card.Text>
-                    <Card.Text>size: {rest.rest_size}</Card.Text>
-                </Card.Body>
-            </Card>
-            )
-        })}
+        <Pagination itemsPerPage={3} items={restaurants}/>
         </Container>
-        
       )
   }
 }
