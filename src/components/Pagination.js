@@ -1,8 +1,7 @@
 import ReactPaginate from 'react-paginate';
 import React, {useEffect, useState} from 'react'
-import Card from 'react-bootstrap/Card';
 
-const Pagination = ({itemsPerPage, items}) => {
+const Pagination = ({itemsPerPage, items, layout}) => {
     const [currentItems, setCurrentItems] = useState(null);
     const [pageCount, setPageCount] = useState(0);
     const [itemOffset, setItemOffset] = useState(0);
@@ -24,17 +23,7 @@ const Pagination = ({itemsPerPage, items}) => {
 
     return (
         <>
-         {currentItems === null || currentItems.length === 0 ? null : currentItems.map(rest => {
-            return (
-            <Card style={{ 'margin-bottom': '20px' }}>
-                <Card.Header as="h5">{rest.rest_name}</Card.Header>
-                <Card.Body>
-                    <Card.Text>{rest.rest_location}</Card.Text>
-                    <Card.Text>size: {rest.rest_size}</Card.Text>
-                </Card.Body>
-            </Card>
-            )
-        })}
+         {currentItems === null || currentItems.length === 0 ? null : currentItems.map(rest => layout(rest))}
         <ReactPaginate
             breakLabel="..."
             nextLabel=">"
