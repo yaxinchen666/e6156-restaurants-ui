@@ -3,35 +3,64 @@ import React, {useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import Card from "react-bootstrap/Card";
 import ReactPaginate from "react-paginate";
+import Cookies from "universal-cookie";
 
 // backend
 //export const USER_URL = 'http://3.89.63.117:5011/users';
 //export const ORDER_URL = 'http://cs6156order-env.eba-m5jcrnci.us-east-1.elasticbeanstalk.com/allOrderProfiles';
+export const LOGIN_URL = 'http://127.0.0.1:5000/login' // TODO
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
 
-export const UserNotFoundHTML = () => {
+export const USER_STATUS = {
+  VALID: "Valid",
+  REQUEST_NOT_READY: "Request Not Ready",
+  SESSION_EXPIRED_ERR: "Session Expired",
+  NOT_LOGIN_ERR: "User Not Login",
+  AUTH_FAILED_ERR: "Authentication Failed",
+  NOT_FOUND_ERR: "User Not Found"
+}
+
+export const UserErrHTML = ({errMessage}) => {
   return (
-    <h1 className={"reg-font"}>Error: User Not Found</h1>
+    <div>
+      <h1 className={"reg-font"}>Error: {errMessage}</h1>
+      <h2 className={"sign-in-font"}> Please log in to continue. <Link className='sign-in-link' to="/user/login"> Log in </Link> </h2>
+    </div>
   );
 }
 
-export const getUser = async (accountId, setUser, setUserValid) =>{
-  if(accountId) {
-    const response = await axios.get( USER_URL + '/' + accountId);
-    if (response.status === 200) {
-      setUser({
-        accountID: response.data.AccountID,
-        firstname: response.data.FirstName,
-        lastname: response.data.LastName,
-        email: response.data.Email
-      });
-      setUserValid(true);
-    } else {
-      setUserValid(false);
-    }
+export const getUser = async (setAccountId, setUser, setUserStatus) =>{
+  const cookies = new Cookies();
+  if (cookies.get('id') === undefined) {
+    setUserStatus(USER_STATUS.NOT_LOGIN_ERR);
+  } else {
+    setAccountId(cookies.get('id'));
+    axios.get( USER_URL + '/' + cookies.get('id'))
+      .then(response => {
+        if (response.status === 200) {
+          setUser({
+            accountID: response.data.AccountID,
+            firstname: response.data.FirstName,
+            lastname: response.data.LastName,
+            email: response.data.Email
+          });
+          setUserStatus(USER_STATUS.VALID);
+        } else {
+          setUserStatus(USER_STATUS.NOT_FOUND_ERR);
+        }
+      })
+      .catch(err => {
+        if (err.response.status === 440) {
+          setUserStatus(USER_STATUS.SESSION_EXPIRED_ERR);
+        } else if (err.response.status === 401) {
+          setUserStatus(USER_STATUS.AUTH_FAILED_ERR);
+        } else {
+          setUserStatus(USER_STATUS.NOT_FOUND_ERR);
+        }
+      })
   }
 }
-
+// TODO...
 export const UserItemsList = (data_url, data_key, title, layout) => {
   const [items, setItems] = useState([]);
   const accountId = useParams().id;
@@ -78,7 +107,7 @@ export const UserItemsList = (data_url, data_key, title, layout) => {
   const UserExistsHTML = () => {
     return (
       <div>
-        <Link className='cancel-link reg-font' to={`/user/${accountId}/home`}> <p>&larr;  Back to home page </p> </Link>
+        <Link className='cancel-link reg-font' to={`/user/home`}> <p>&larr;  Back to home page </p> </Link>
         <br />
         <br />
 
@@ -97,7 +126,7 @@ export const UserItemsList = (data_url, data_key, title, layout) => {
         <div>
           {userValid ?
             <UserExistsHTML />
-            : <UserNotFoundHTML />}
+            : <UserErrHTML errMessage={USER_STATUS.NOT_FOUND_ERR} />}
         </div>
         : ''}
       <ReactPaginate
