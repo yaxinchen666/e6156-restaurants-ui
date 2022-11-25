@@ -69,12 +69,11 @@ const UserEdit = () => {
   }
 
   const handleLogoutSubmit = async (event) => {
-    // TODO
-    // event.preventDefault();
-    // const cookies = new Cookies();
-    // cookies.remove('id');
-    // cookies.remove('token');
-    // return navigate('/user/login');
+    event.preventDefault();
+    const cookies = new Cookies();
+    cookies.remove('id');
+    cookies.remove('token');
+    return navigate('/user/login');
   }
 
   const handleDeleteSubmit = async (event) => {

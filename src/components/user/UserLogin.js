@@ -10,8 +10,6 @@ import {LOGIN_URL, USER_URL} from "./UserUtil";
 import jwt_decode from "jwt-decode";
 import Cookies from "universal-cookie"
 
-// TODO return error code (session expired etc); user not login; logout
-
 const UserLogin = () => {
   const navigate = useNavigate();
   const cookies = new Cookies();
@@ -20,7 +18,7 @@ const UserLogin = () => {
     axios.post(LOGIN_URL, {'token': credentialResponse.credential})
       .then(response => {
         if (response.status === 200) {
-          cookies.set('token', credentialResponse.credential);
+          cookies.set('token', credentialResponse.credential, {path: '/'});
           cookies.set('id', jwt_decode(credentialResponse.credential)['sub']);
           toast.success("Login success.", {autoClose: 1000});
           setTimeout(() => {
