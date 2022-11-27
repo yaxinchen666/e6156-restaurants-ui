@@ -23,7 +23,7 @@ const Pagination = ({itemsPerPage, items, layout}) => {
 
     return (
         <>
-         {currentItems === null || currentItems.length === 0 ? null : currentItems.map(rest => layout(rest))}
+         {currentItems === null || currentItems.length === 0 ? null : currentItems.map((rest, i) => layout(rest, i))}
         <ReactPaginate
             breakLabel="..."
             nextLabel=">"

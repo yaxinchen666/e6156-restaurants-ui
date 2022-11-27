@@ -9,6 +9,7 @@ import UserHome from './components/user/UserHome';
 import UserEdit from './components/user/UserEdit';
 import UserOrders from './components/user/UserOrders';
 import UserFavoriteRestaurants from "./components/user/UserFavoriteRestaurants";
+import EditRestaurant from './components/EditRestaurant';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/user/:id/edit" element={<UserEdit />} />
         <Route path="/user/:id/orders" element={<UserOrders />} />
         <Route path="/user/:id/favorite-restaurants" element={<UserFavoriteRestaurants />} />
+        <Route path="/restaurant/:id/edit" element={<EditRestaurant />} />
       </Routes>
     </div>
   );
