@@ -8,7 +8,7 @@ import Cookies from "universal-cookie";
 // backend
 //export const USER_URL = 'http://3.89.63.117:5011/users';
 //export const ORDER_URL = 'http://cs6156order-env.eba-m5jcrnci.us-east-1.elasticbeanstalk.com/allOrderProfiles';
-export const LOGIN_URL = 'http://127.0.0.1:5000/login' // TODO
+export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login' // TODO
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
 
 export const USER_STATUS = {
@@ -60,37 +60,48 @@ export const getUser = async (setAccountId, setUser, setUserStatus) =>{
       })
   }
 }
-// TODO...
-export const UserItemsList = (data_url, data_key, title, layout) => {
+
+export const UserItemsList = (data_endpoint, data_key, title, layout) => {
   const [items, setItems] = useState([]);
-  const accountId = useParams().id;
-  const [requestReady, setRequestReady] = useState(false);
-  const [userValid, setUserValid] = useState(true);
+  const [userStatus, setUserStatus] = useState(USER_STATUS.REQUEST_NOT_READY);
+
+  const cookies = new Cookies();
 
   const itemsPerPage = 4;
   const [curPage, setCurPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
   const getItems = (curPage) => {
-    if (accountId) {
+    if (cookies.get('id') === undefined) {
+      setUserStatus(USER_STATUS.NOT_LOGIN_ERR);
+    } else {
+      const accountId = cookies.get('id');
+      const data_url = USER_URL + '/' + accountId + '/' + data_endpoint;
       axios.get(data_url+
         '?page=' + curPage + '&per_page=' + itemsPerPage)
         .then(response => {
-          setUserValid(true);
+          setUserStatus(USER_STATUS.VALID);
           //console.log(typeof(response.data.Restaurants));
           //setRestaurants(response.data.Restaurants);
           setItems(response.data[data_key]);
           setPageCount(response.data['numberPages']);
         })
-        .then(() => {setRequestReady(true);})
+        .then()
         .catch(err => {
-          if (err.response.data === "USER NOT FOUND") {
-            setUserValid(false);
-          } else if (err.response.data === "NOT FOUND") {
-            setUserValid(true);
-            setItems([]);
+          if (err.response.status === 440) {
+            setUserStatus(USER_STATUS.SESSION_EXPIRED_ERR);
+          } else if (err.response.status === 401) {
+            setUserStatus(USER_STATUS.AUTH_FAILED_ERR);
           } else {
-            console.log(err);
+            if (err.response.data === "USER NOT FOUND") {
+              setUserStatus(USER_STATUS.NOT_FOUND_ERR);
+            } else if (err.response.data === "NOT FOUND") {
+              setUserStatus(USER_STATUS.VALID);
+              setItems([]);
+            } else {
+              setUserStatus(USER_STATUS.NOT_FOUND_ERR);
+              console.log(err);
+            }
           }
         })
     }
@@ -122,13 +133,15 @@ export const UserItemsList = (data_url, data_key, title, layout) => {
 
   return (
     <div>
-      {requestReady ?
+      {userStatus === USER_STATUS.REQUEST_NOT_READY ?
+        ''
+        :
         <div>
-          {userValid ?
+          {userStatus === USER_STATUS.VALID ?
             <UserExistsHTML />
-            : <UserErrHTML errMessage={USER_STATUS.NOT_FOUND_ERR} />}
+            : <UserErrHTML errMessage={userStatus} />}
         </div>
-        : ''}
+      }
       <ReactPaginate
         breakLabel="..."
         nextLabel=">"

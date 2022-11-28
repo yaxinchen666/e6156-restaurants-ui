@@ -6,7 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
-import {getUser, USER_URL, UserNotFoundHTML, UserItemsList} from './UserUtil';
+import {getUser, USER_URL, UserItemsList} from './UserUtil';
+import Cookies from "universal-cookie";
 
 const layout = (rest) => {
   return (
@@ -17,8 +18,7 @@ const layout = (rest) => {
 };
 
 const UserFavoriteRestaurants = () => {
-  const accountId = useParams().id;
-  return UserItemsList(USER_URL + '/' + accountId + '/FavoriteRestaurants',
+  return UserItemsList('FavoriteRestaurants',
     'Restaurants',
     'Favorite Restaurants',
     layout);
