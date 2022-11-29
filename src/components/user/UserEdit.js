@@ -5,9 +5,11 @@ import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import {GoogleLogout} from "react-google-login";
+
 import './User.css'
 
-import {getUser, USER_URL, USER_STATUS, UserErrHTML, LOGIN_URL} from './UserUtil';
+import {getUser, USER_URL, USER_STATUS, UserErrHTML, LOGIN_URL, GOOGLE_CLIENT_ID} from './UserUtil';
 import Cookies from "universal-cookie";
 
 const UserEdit = () => {
@@ -68,8 +70,7 @@ const UserEdit = () => {
     }
   }
 
-  const handleLogoutSubmit = async (event) => {
-    event.preventDefault();
+  const handleLogoutSubmit = async () => {
     const cookies = new Cookies();
     cookies.remove('id');
     cookies.remove('token');
@@ -113,13 +114,13 @@ const UserEdit = () => {
               <br />
               <br />
 
-              <form onSubmit={handleLogoutSubmit} method="post">
-                <div className="container-log-btn">
-                  <button type="submit" name = "btn_submit" className="log-form-btn">
-                    <span> Log Out </span>
-                  </button>
-                </div>
-              </form>
+              <div>
+                <GoogleLogout
+                  clientId={GOOGLE_CLIENT_ID}
+                  buttonText="Logout"
+                  onLogoutSuccess={handleLogoutSubmit}
+                ></GoogleLogout>
+              </div>
 
               <br />
               <br />

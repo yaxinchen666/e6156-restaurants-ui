@@ -11,6 +11,8 @@ import Cookies from "universal-cookie";
 export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login' // TODO
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
 
+export const GOOGLE_CLIENT_ID = '432700070169-7eruhqjdadcqvmmh8ql54mij59vtpf5k.apps.googleusercontent.com'
+
 export const USER_STATUS = {
   VALID: "Valid",
   REQUEST_NOT_READY: "Request Not Ready",
