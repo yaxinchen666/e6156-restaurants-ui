@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
-import {USER_URL, getUser, UserNotFoundHTML} from './UserUtil';
+import {USER_URL, getUser, UserErrHTML, USER_STATUS} from './UserUtil';
 import {ToastContainer} from "react-toastify";
 
 const UserHome = () => {
@@ -16,19 +16,16 @@ const UserHome = () => {
     lastname: '',
     email: ''
   });
-  const accountId = useParams().id;
-  const [userRequestReady, setUserRequestReady] = useState(false);
-  const [userValid, setUserValid] = useState(true);
+  const [accountId, setAccountId] = useState('');
+  const [userStatus, setUserStatus] = useState(USER_STATUS.REQUEST_NOT_READY);
 
   useEffect(() => {
-    getUser(accountId, setUser, setUserValid).catch(
+    getUser(setAccountId, setUser, setUserStatus).catch(
       err => {
         console.log(err);
-        setUserValid(false);
+        setUserStatus(USER_STATUS.NOT_FOUND_ERR);
       }
-    ).then(
-      () => setUserRequestReady(true)
-    );
+    ).then();
   },[]);
 
   const UserExistsHTML = () => {
@@ -36,17 +33,17 @@ const UserHome = () => {
       <div>
         <br/>
         <h1 className={'reg-font'}>{user.firstname} {user.lastname}</h1>
-        <Link className='edit-link reg-font' to={`/user/${user.accountID}/edit`}> Edit Account </Link>
+        <Link className='edit-link reg-font' to={`/user/edit`}> Edit Account </Link>
         <br/>
         <br/>
         <div className={'button-blocks'}>
           <div className={'button-block'}>
             <div className='button-block-link-div'>
-              <Link className='reg-font button-block-link' to={`/user/${user.accountID}/favorite-restaurants`}> Favorites </Link>
+              <Link className='reg-font button-block-link' to={`/user/favorite-restaurants`}> Favorites </Link>
             </div>
           </div>
           <div className={'button-block'}>
-            <Link className='reg-font button-block-link' to={`/user/${user.accountID}/orders`}> Orders </Link>
+            <Link className='reg-font button-block-link' to={`/user/orders`}> Orders </Link>
           </div>
         </div>
       </div>
@@ -55,7 +52,14 @@ const UserHome = () => {
 
   return (
     <div>
-      {userRequestReady ? <div>{userValid ? <UserExistsHTML /> : <UserNotFoundHTML />}</div> : ''}
+      {userStatus === USER_STATUS.REQUEST_NOT_READY ?
+        ''
+        :
+        <div>
+          {userStatus === USER_STATUS.VALID ?
+            <UserExistsHTML />
+            : <UserErrHTML errMessage={userStatus} />}
+        </div>}
       <ToastContainer />
     </div>
   );

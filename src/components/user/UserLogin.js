@@ -1,60 +1,75 @@
-import {ToastContainer} from "react-toastify";
-import {Link, useNavigate} from "react-router-dom";
-import React, {useState} from "react";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+import {useNavigate} from "react-router-dom";
+import React, {useEffect} from "react";
+
+import { GoogleLogin } from 'react-google-login';
+import { gapi } from 'gapi-script';
+
+import axios from "axios";
+import {LOGIN_URL, USER_URL, GOOGLE_CLIENT_ID} from "./UserUtil";
+import jwt_decode from "jwt-decode";
+import Cookies from "universal-cookie"
 
 const UserLogin = () => {
-  const [user, setUser] = useState({
-    email: '',
-    password: ''
+  const navigate = useNavigate();
+  const cookies = new Cookies();
+
+  const clientId = GOOGLE_CLIENT_ID;
+
+  useEffect(() => {
+    const initClient = () => {
+      gapi.client.init({
+        clientId: clientId,
+        scope: ''
+      });
+    };
+    gapi.load('client:auth2', initClient);
   });
 
-  const navigate = useNavigate();
 
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setUser(user_params => ({...user_params, [name]: value}))
+  const onSignInSuccess = async (credentialResponse) => {
+    axios.post(LOGIN_URL, {'token': credentialResponse.tokenId})
+      .then(response => {
+        if (response.status === 200) {
+          cookies.set('token', credentialResponse.tokenId, {path: '/'});
+          cookies.set('id', jwt_decode(credentialResponse.tokenId)['sub']);
+          toast.success("Login success.", {autoClose: 1000});
+          setTimeout(() => {
+            return navigate('/');
+          }, 1000);
+        } else {
+          toast.error(response.data);
+          console.log(response);
+        }
+      })
+      .catch(err => {
+        toast.error(err.response.data);
+        console.log(err);
+      })
   }
 
-  const handleSubmit = async (event) => {
-    // TODO
-    // get AccountID from backend
+  const onSignInError = () => {
+    toast.error('Login Failed');
+    console.log('Login Failed');
   }
 
   return (
     <div>
       <br />
-      <h1 className={"reg-font"}> Restaurants </h1>
-      <h2 className={"reg-font"}> Log In </h2>
+      <h2 className={""}> Log in with Google </h2>
       <br />
-      <form onSubmit={handleSubmit} method="post" className = "log-form">
-        <label className="log-label">
-          Email Address
-        </label>
-        <input className="log-input" type="email" id = "email" name = "email"  required value={user.email} onChange={handleChange} />
 
-        <br />
+      <GoogleLogin
+        clientId={clientId}
+        buttonText="Sign in with Google"
+        onSuccess={onSignInSuccess}
+        onFailure={onSignInError}
+        cookiePolicy={'single_host_origin'}
+      />
 
-        <label className="log-label">
-          Password
-        </label>
-        <input className="log-input"  type="password" id = "password" name = "password"  required value={user.password} autoComplete="true" onChange={handleChange} />
-
-        <br />
-        <br />
-
-        <div className="container-log-btn">
-          <button type="submit" name = "btn_submit" className="log-form-btn">
-            <span>LOGIN</span>
-          </button>
-        </div>
-        <br />
-
-        <ToastContainer />
-      </form>
-
-      <br/><br/>
-      <p className={"sign-in-font"}> New user? <Link className='sign-in-link' to="/user/register"> Register </Link> </p>
+      <ToastContainer />
 
     </div>
   )

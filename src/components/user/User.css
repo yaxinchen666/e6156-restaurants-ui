@@ -50,6 +50,11 @@
   color: darkgreen;
 }
 
+.sign-in-button {
+  display: flex;
+  justify-content: center;
+}
+
 .grey-line {
   height: 2px;
   width: 500px;
