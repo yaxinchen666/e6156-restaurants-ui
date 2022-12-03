@@ -21,6 +21,7 @@ const UserEdit = () => {
   const [userStatus, setUserStatus] = useState(USER_STATUS.REQUEST_NOT_READY);
 
   const navigate = useNavigate();
+  const cookies = new Cookies();
 
   useEffect(() => {
     getUser(setAccountId, setUser, setUserStatus).catch(
@@ -50,7 +51,11 @@ const UserEdit = () => {
     formData.append('FirstName', user.firstname);
     formData.append('LastName', user.lastname);
     try {
-      const response = await axios.put(USER_URL + '/' + accountId, formData);
+      const response = await axios.put(USER_URL + '/' + accountId, formData,  {
+        headers: {
+          'Authorization': cookies.get('token')
+        }
+      });
       if (response.status === 200) {
         toast.success("Update success.", {autoClose: 1000, hideProgressBar: true});
         setTimeout(() => {
@@ -80,8 +85,16 @@ const UserEdit = () => {
   const handleDeleteSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.delete(USER_URL + '/' + accountId);
+      const response = await axios.delete(USER_URL + '/' + accountId,  {
+        headers: {
+          'Authorization': cookies.get('token')
+        }
+      });
       if (response.status === 200) {
+        const cookies = new Cookies();
+        cookies.remove('id');
+        cookies.remove('token');
+
         toast.success("Deletion success.");
         setTimeout(() => {
           return navigate('/user/login');

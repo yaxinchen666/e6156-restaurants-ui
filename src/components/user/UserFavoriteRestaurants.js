@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
-import {getUser, USER_URL, UserItemsList} from './UserUtil';
+import {UserItemsList} from './UserUtil';
 import Cookies from "universal-cookie";
 
 const layout = (rest) => {

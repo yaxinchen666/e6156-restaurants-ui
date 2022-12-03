@@ -67,7 +67,6 @@ const UserLogin = () => {
         onSuccess={onSignInSuccess}
         onFailure={onSignInError}
         cookiePolicy={'single_host_origin'}
-        isSignedIn={true}
       />
 
       <ToastContainer />

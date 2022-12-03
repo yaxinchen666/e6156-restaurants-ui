@@ -8,7 +8,7 @@ import Cookies from "universal-cookie";
 // backend
 //export const USER_URL = 'http://3.89.63.117:5011/users';
 //export const ORDER_URL = 'http://cs6156order-env.eba-m5jcrnci.us-east-1.elasticbeanstalk.com/allOrderProfiles';
-export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login' // TODO
+export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login'
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
 
 export const GOOGLE_CLIENT_ID = '432700070169-7eruhqjdadcqvmmh8ql54mij59vtpf5k.apps.googleusercontent.com'
@@ -37,8 +37,13 @@ export const getUser = async (setAccountId, setUser, setUserStatus) =>{
     setUserStatus(USER_STATUS.NOT_LOGIN_ERR);
   } else {
     setAccountId(cookies.get('id'));
-    axios.get( USER_URL + '/' + cookies.get('id'))
+    axios.get( USER_URL + '/' + cookies.get('id'), {
+      headers: {
+        'Authorization': cookies.get('token')
+      }
+    })
       .then(response => {
+        console.log(response)
         if (response.status === 200) {
           setUser({
             accountID: response.data.AccountID,
@@ -52,6 +57,7 @@ export const getUser = async (setAccountId, setUser, setUserStatus) =>{
         }
       })
       .catch(err => {
+        console.log(err.request)
         if (err.response.status === 440) {
           setUserStatus(USER_STATUS.SESSION_EXPIRED_ERR);
         } else if (err.response.status === 401) {
@@ -80,7 +86,12 @@ export const UserItemsList = (data_endpoint, data_key, title, layout) => {
       const accountId = cookies.get('id');
       const data_url = USER_URL + '/' + accountId + '/' + data_endpoint;
       axios.get(data_url+
-        '?page=' + curPage + '&per_page=' + itemsPerPage)
+        '?page=' + curPage + '&per_page=' + itemsPerPage,
+        {
+          headers: {
+            'Authorization': cookies.get('token')
+          }
+        })
         .then(response => {
           setUserStatus(USER_STATUS.VALID);
           //console.log(typeof(response.data.Restaurants));
