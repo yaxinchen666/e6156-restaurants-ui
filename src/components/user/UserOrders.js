@@ -1,15 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import React from 'react';
 import Card from 'react-bootstrap/Card';
 
-import axios from 'axios';
-import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
 import {getUser, USER_URL, UserItemsList, UserNotFoundHTML} from './UserUtil';
-import ReactPaginate from "react-paginate";
+import Cookies from "universal-cookie";
 
 const layout = (order) => {
   return (
@@ -20,8 +17,7 @@ const layout = (order) => {
 };
 
 const UserOrders = () => {
-  const accountId = useParams().id;
-  return UserItemsList(USER_URL + '/' + accountId + '/UserOrders',
+  return UserItemsList('UserOrders',
     'Orders',
     'Orders',
     layout);
