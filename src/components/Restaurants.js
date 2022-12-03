@@ -86,6 +86,7 @@ const Restaurants = () => {
         <Card.Body>
           <Card.Text>{rest.rest_location}</Card.Text>
           <Card.Text>size: {rest.rest_size}</Card.Text>
+          <Button variant="outline-info" size="sm" onClick={e => navigate(`/order/${rest.rest_id}`)}>Order</Button>
         </Card.Body>
       </Card>
     )
