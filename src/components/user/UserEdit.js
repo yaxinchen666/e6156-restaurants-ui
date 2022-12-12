@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
@@ -9,7 +9,7 @@ import {GoogleLogout} from "react-google-login";
 
 import './User.css'
 
-import {getUser, USER_URL, USER_STATUS, UserErrHTML, LOGIN_URL, GOOGLE_CLIENT_ID} from './UserUtil';
+import {getUser, USER_URL, USER_STATUS, UserErrHTML, GOOGLE_CLIENT_ID} from './UserUtil';
 import Cookies from "universal-cookie";
 
 const UserEdit = () => {
@@ -81,7 +81,7 @@ const UserEdit = () => {
     cookies.remove('token');
     return navigate('/user/login');
   }
-
+  /*
   const handleDeleteSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -112,6 +112,7 @@ const UserEdit = () => {
       console.log(err);
     }
   }
+   */
 
   return (
     <div>
@@ -164,23 +165,23 @@ const UserEdit = () => {
                 <br />
               </form>
 
-              <br />
-              <br />
-              <br />
-              <div className={'grey-line'}></div>
-              <br />
-              <br />
+              {/*<br />*/}
+              {/*<br />*/}
+              {/*<br />*/}
+              {/*<div className={'grey-line'}></div>*/}
+              {/*<br />*/}
+              {/*<br />*/}
 
-              <form onSubmit={handleDeleteSubmit} method="post">
-                <div className="container-log-btn">
-                  <button type="submit" name = "btn_submit" className="log-form-btn">
-                    <span> Delete account </span>
-                  </button>
-                </div>
-              </form>
+              {/*<form onSubmit={handleDeleteSubmit} method="post">*/}
+              {/*  <div className="container-log-btn">*/}
+              {/*    <button type="submit" name = "btn_submit" className="log-form-btn">*/}
+              {/*      <span> Delete account </span>*/}
+              {/*    </button>*/}
+              {/*  </div>*/}
+              {/*</form>*/}
 
-              <br />
-              <br />
+              {/*<br />*/}
+              {/*<br />*/}
 
             </div>
             : <UserErrHTML errMessage={userStatus} />}
