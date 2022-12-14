@@ -47,11 +47,11 @@ const UserEdit = () => {
       return;
     }
 
-    let formData = new FormData();
-    formData.append('FirstName', user.firstname);
-    formData.append('LastName', user.lastname);
     try {
-      const response = await axios.put(USER_URL + '/' + accountId, formData,  {
+      const response = await axios.put(USER_URL + '/' + accountId, {
+        'FirstName': user.firstname,
+        'LastName': user.lastname
+      },  {
         headers: {
           'Authorization': cookies.get('token')
         }

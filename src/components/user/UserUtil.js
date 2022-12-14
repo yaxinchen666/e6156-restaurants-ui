@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import Container from "react-bootstrap/Container";
 
 // backend
-export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login'
+export const LOGIN_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/login'
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
 export const USER_ORDERS_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/orderProfile/account'
 
