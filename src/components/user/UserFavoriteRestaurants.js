@@ -1,13 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import React from 'react';
 import Card from 'react-bootstrap/Card';
 
 import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
-import {UserItemsList} from './UserUtil';
-import Cookies from "universal-cookie";
+import {USER_URL, UserItemsList} from './UserUtil';
 
 const layout = (rest) => {
   return (
@@ -18,7 +16,10 @@ const layout = (rest) => {
 };
 
 const UserFavoriteRestaurants = () => {
-  return UserItemsList('FavoriteRestaurants',
+  const get_data_url = (accountId) => {
+    return USER_URL + '/' + accountId + '/FavoriteRestaurants';
+  }
+  return UserItemsList(get_data_url,
     'Restaurants',
     'Favorite Restaurants',
     layout);
