@@ -1,16 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {ToastContainer} from "react-toastify";
-import {USER_STATUS, UserErrHTML} from "./user/UserUtil";
 import Cookies from "universal-cookie";
 import ListGroup from 'react-bootstrap/ListGroup';
 import Container from "react-bootstrap/Container";
 
 const OrderInfo = () => {
+  const STATUS = {
+    VALID: "Valid",
+    REQUEST_NOT_READY: "Request Not Ready",
+    AUTH_FAILED_ERR: "Authentication Failed",
+    OTHER: "Other"
+  }
+
   const [order, setOrder] = useState({
     time: '',
     total: '',
@@ -19,7 +25,7 @@ const OrderInfo = () => {
     firstname: '',
     lastname: '',
   });
-  const [userStatus, setUserStatus] = useState(USER_STATUS.REQUEST_NOT_READY);
+  const [status, setStatus] = useState(STATUS.REQUEST_NOT_READY);
 
   const cookies = new Cookies();
 
@@ -27,20 +33,25 @@ const OrderInfo = () => {
 
   useEffect(() => {
     if (cookies.get('id') === undefined) {
-      setUserStatus(USER_STATUS.NOT_LOGIN_ERR);
+      setStatus(STATUS.AUTH_FAILED_ERR);
     } else {
-      // TODO send request to composite service
-      setUserStatus(USER_STATUS.VALID)
-      setOrder({
-        time: '15:00 12-07-2022',
-        total: '25',
-        restaurant: 'res',
-        dishes: [
-          'dish1',
-          'dish2'
-        ],
-        firstname: 'first',
-        lastname: 'last',
+      axios.get('http://cs6156composite-env.eba-jpksptra.us-east-1.elasticbeanstalk.com/order/' + orderId, {
+        headers: {
+          'Authorization': cookies.get('token')
+        }
+      }).then(response => {
+        setStatus(STATUS.VALID)
+        setOrder({
+          time: new Date(response.data.data.orderTime).toUTCString().slice(0, -4),
+          total: response.data.data.total,
+          restaurant: response.data.data.restaurant.restName,
+          dishes: response.data.data.dishList.map(dish_info => dish_info.dishName),
+          firstname: response.data.data.user.firstName,
+          lastname: response.data.data.user.lastName,
+        })
+      }).catch(err => {
+        setStatus(STATUS.OTHER) // TODO
+        console.log(err)
       })
     }
   },[]);
@@ -62,15 +73,33 @@ const OrderInfo = () => {
     )
   }
 
+  const InvalidAccessHTML = () => {
+    return (
+      <div>
+        <h3 className={"sign-in-font"}> Invalid access. You may need to log in to continue. <Link className='sign-in-link' to="/user/login"> Log in </Link> </h3>
+      </div>
+    );
+  }
+
+  // const ServerErrorHTML = () => {
+  //   return (
+  //     <div>
+  //       <h3 className={"sign-in-font"}> Internal Server Error. </h3>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div>
-      {userStatus === USER_STATUS.REQUEST_NOT_READY ?
-        ''
+      {status === STATUS.REQUEST_NOT_READY ?
+        'Still loading...'
         :
         <div>
-          {userStatus === USER_STATUS.VALID ?
+          {status === STATUS.VALID ?
             <OrderInfoHTML />
-            : <UserErrHTML errMessage={userStatus} />}
+            :
+            <InvalidAccessHTML />
+          }
         </div>}
       <ToastContainer />
     </div>
