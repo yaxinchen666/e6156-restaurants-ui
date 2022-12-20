@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import Cookies from "universal-cookie";
 
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([])
@@ -21,6 +22,8 @@ const Restaurants = () => {
   const [restName, setRestName] = useState("")
   const [restLoc, setRestLoc] = useState("")
   const [restSize, setRestSize] = useState("")
+  const cookies = new Cookies();
+  const accountId = cookies.get('id');
 
   const addRest = () => {
     console.log(restName, restLoc, restSize)
@@ -86,6 +89,7 @@ const Restaurants = () => {
         <Card.Body>
           <Card.Text>{rest.rest_location}</Card.Text>
           <Card.Text>size: {rest.rest_size}</Card.Text>
+          <Button variant="outline-info" size="sm" onClick={e => navigate(`/order/${rest.rest_id}`)}>Order</Button>
         </Card.Body>
       </Card>
     )
