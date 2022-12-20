@@ -14,7 +14,8 @@ const layout = (order) => {
       <Card style={{ 'margin-bottom': '20px' }}>
         <Card.Body>
           <Card.Text>
-            {new Date(order.orderTime).toDateString()} | ${order.total} | <Card.Link href={"/order-info/" + order.orderId}>Details</Card.Link>
+            {/*{ | ${order.total}}*/}
+            {new Date(order.orderTime).toDateString()} | <Card.Link href={"/order-info/" + order.orderId}>Details</Card.Link>
           </Card.Text>
         </Card.Body>
       </Card>

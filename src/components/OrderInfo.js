@@ -21,7 +21,7 @@ const OrderInfo = () => {
     time: '',
     total: '',
     restaurant: '',
-    dishes: [],
+    dishes: {},
     firstname: '',
     lastname: '',
   });
@@ -42,15 +42,16 @@ const OrderInfo = () => {
       }).then(response => {
         setStatus(STATUS.VALID)
         setOrder({
-          time: new Date(response.data.data.orderTime).toUTCString().slice(0, -4),
+          time: new Date(response.data.data.orderTime).toDateString(),
           total: response.data.data.total,
           restaurant: response.data.data.restaurant.restName,
-          dishes: response.data.data.dishList.map(dish_info => dish_info.dishName),
+          dishes: response.data.data.dishList.map(dish_info => dish_info.dishName)
+            .reduce((cnt, cur) => (cnt[cur] = cnt[cur] + 1 || 1, cnt), {}),
           firstname: response.data.data.user.firstName,
           lastname: response.data.data.user.lastName,
         })
       }).catch(err => {
-        setStatus(STATUS.OTHER) // TODO
+        setStatus(STATUS.OTHER)
         console.log(err)
       })
     }
@@ -63,12 +64,12 @@ const OrderInfo = () => {
         <p><b>Ordered at:</b> {order.time} </p>
         <h5> {order.firstname + ' ' + order.lastname}'s order </h5>
         <ListGroup width={'60%'}>
-          {order.dishes.map(dish =>
-            <ListGroup.Item>{dish}</ListGroup.Item>
+          {Object.keys(order.dishes).map(dish =>
+            <ListGroup.Item> <em>{dish}</em>  <span>&nbsp;&#215;</span> {order.dishes[dish]}</ListGroup.Item>
           )}
         </ListGroup>
         <br/>
-        <p><b>Total:</b> ${order.total}</p>
+        {/*<p><b>Total:</b> ${order.total}</p>*/}
       </Container>
     )
   }
