@@ -10,27 +10,28 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Order = () => {
     const rest_id = useParams().id
-    const [dishes, setDishes] = useState([{ "dish_id": 1, "dish_name": "Arugula Salad", "flavor": "NS", "dish_description": "salad", "serve_size": "2", "rest_id": 23336 }, { "dish_id": 2, "dish_name": "Classic Burger", "flavor": "NS", "dish_description": "Burger", "serve_size": "1", "rest_id": 72390 }])
-    const [orders, setOrders] = useState([0, 0])
+    const [dishes, setDishes] = useState([])
+    const [orders, setOrders] = useState([])
     const cookies = new Cookies();
 
-    // useEffect(() => {
-    //     axios.get(`https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/restaurants/dishes/${rest_id}`)
-    //         .then(
-    //             res => {
-    //                 const dish_data = res['data']
-    //                 console.log(dish_data)
-    //                 setDishes(dish_data)
-    //                 const numDishes = dish_data.length();
-    //                 setOrders(Array(numDishes).fill(0));
-    //             }
-    //         )
-    //         .catch(
-    //             error => {
-    //                 console.log(error)
-    //             }
-    //         )
-    // }, [])
+    useEffect(() => {
+        axios.get(`https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/restaurants/dishes/${rest_id}`)
+            .then(
+                res => {
+                    const dish_data = res['data']
+                    console.log(dish_data)
+                    setDishes(dish_data)
+                    const numDishes = dish_data.length;
+                    setOrders(Array(numDishes).fill(0));
+                }
+            )
+            .catch(
+                error => {
+                    toast.error("No dishes from the restaurant so far!")
+                    console.log(error)
+                }
+            )
+    }, [])
 
     const incrementCount = (i) => {
         const newOrders = [...orders];
@@ -97,8 +98,15 @@ const Order = () => {
         )
     })
 
+    if (dishes.length === 0) return (
+        <Container>
+            <p>No dishes from the restaurant so far!</p>
+        </Container>
+    );
+
     return (
         <Container>
+            <p>Please order here:</p>
             {dishItems}
             <Button className='mt-3' variant="outline-info" size="sm" onClick={submitOrder}>Submit Your Order</Button>
             <ToastContainer />
