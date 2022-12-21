@@ -7,6 +7,7 @@ import './User.css'
 
 import {USER_ORDERS_URL, UserItemsList} from './UserUtil';
 import Container from "react-bootstrap/Container";
+import {Link} from "react-router-dom";
 
 const layout = (order) => {
   return (
@@ -14,8 +15,7 @@ const layout = (order) => {
       <Card style={{ 'margin-bottom': '20px' }}>
         <Card.Body>
           <Card.Text>
-            {/*{ | ${order.total}}*/}
-            {new Date(order.orderTime).toDateString()} | <Card.Link href={"/order-info/" + order.orderId}>Details</Card.Link>
+            {new Date(order.orderTime).toDateString()} | <Link to={`/order-info/${order.orderId}`}> Details </Link>
           </Card.Text>
         </Card.Body>
       </Card>
