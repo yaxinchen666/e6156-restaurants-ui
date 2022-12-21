@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { AiOutlineFolderAdd } from 'react-icons/ai';
+import {AiFillHeart, AiOutlineFolderAdd, AiOutlineHeart} from 'react-icons/ai';
 import { BiEditAlt } from 'react-icons/bi';
 import { Container } from 'react-bootstrap';
 import Pagination from './Pagination';
@@ -11,6 +11,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Cookies from "universal-cookie";
+import {USER_STATUS} from "./user/UserUtil";
+import {toast, ToastContainer} from "react-toastify";
 
 const Restaurants = () => {
   const [restaurants, setRestaurants] = useState([])
@@ -24,6 +26,65 @@ const Restaurants = () => {
   const [restSize, setRestSize] = useState("")
   const cookies = new Cookies();
   const accountId = cookies.get('id');
+
+  const [favRestaurants, setFavRestaurants] = useState([])
+
+  const getFavRestaurants = () => {
+    if (cookies.get('id') !== undefined) {
+      axios.get("https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users/" + cookies.get('id') + "/FavoriteRestaurants",
+        {
+          headers: {
+            'Authorization': cookies.get('token')
+          }
+        })
+        .then(response => {
+          setFavRestaurants(response.data.Restaurants.map(rest => rest.RestaurantID));
+        })
+        .catch(
+          error => {
+            console.log(error)
+          }
+        )
+    }
+  }
+
+  const updateFavRest = (rest, axios_method) => {
+    if (cookies.get('id') === undefined) {
+      toast.error("You need to login first");
+    } else {
+      axios({
+        method: axios_method,
+        url: "https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users/" + cookies.get('id') + "/FavoriteRestaurants",
+        data: {
+          "RestaurantID": rest.rest_id,
+          "RestaurantName": rest.rest_name
+        },
+        headers: {
+          'Authorization': cookies.get('token')
+        }
+      }).then(response => {
+          setFavRestaurants(response.data.Restaurants.map(rest => rest.RestaurantID));
+        })
+        .catch(
+          err => {
+            if (err.response.status === 440) {
+              toast.error("Session expired. You need to login.");
+            } else if (err.response.status === 401) {
+              toast.error("Auth failed. You need to login.");
+            } else {
+              if (err.response.data === "USER NOT FOUND") {
+                toast.error("User not found. You need to login.");
+              } else if (err.response.data === "NOT FOUND") {
+                setFavRestaurants([]);
+              } else {
+                getFavRestaurants();
+                console.log(err);
+              }
+            }
+          }
+        )
+    }
+  }
 
   const addRest = () => {
     console.log(restName, restLoc, restSize)
@@ -60,6 +121,7 @@ const Restaurants = () => {
           console.log(error)
         }
       )
+    getFavRestaurants();
   }, [])
 
   const deleteRest = (id) => {
@@ -85,6 +147,11 @@ const Restaurants = () => {
         <Card.Header as="h5">{rest.rest_name}
           <RiDeleteBin6Line onClick={e => deleteRest(rest.rest_id)} />
           <BiEditAlt onClick={e => navigate(`/restaurant/${rest.rest_id}/edit`)} />
+          {favRestaurants.includes(rest.rest_id) ?
+            <AiFillHeart style={{'color': 'red'}} onClick={e => updateFavRest(rest, 'delete')} />
+            :
+            <AiOutlineHeart onClick={e => updateFavRest(rest, 'post')} />
+          }
         </Card.Header>
         <Card.Body>
           <Card.Text>{rest.rest_location}</Card.Text>
@@ -131,6 +198,7 @@ const Restaurants = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <ToastContainer />
       </Container>
     )
   }
