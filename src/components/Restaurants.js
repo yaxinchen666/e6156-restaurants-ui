@@ -91,18 +91,22 @@ const Restaurants = () => {
     const rest_data = {
       "rest_name": restName,
       "rest_location": restLoc,
-      "rest_size": restSize
+      "rest_size": restSize,
+      "rest_id": restaurants.length + 1
     }
     axios.post("https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/restaurants", rest_data)
       .then(
         res => {
-          alert(res)
+          alert('success')
+          console.log(res)
           handleClose()
+          window.location.reload();
         }
       )
       .catch(
         error => {
           alert(error)
+          console.log(error)
           handleClose()
         }
       )
@@ -130,7 +134,7 @@ const Restaurants = () => {
       .then(
         res => {
           console.log(res)
-          alert('success!')
+          alert("Deleted successfully.");
           window.location.reload();
         }
       )
@@ -145,12 +149,12 @@ const Restaurants = () => {
     return (
       <Card key={i}>
         <Card.Header as="h5">{rest.rest_name}
-          <RiDeleteBin6Line onClick={e => deleteRest(rest.rest_id)} />
-          <BiEditAlt onClick={e => navigate(`/restaurant/${rest.rest_id}/edit`)} />
+          <RiDeleteBin6Line style={{cursor: 'pointer', float: 'right'}} onClick={e => deleteRest(rest.rest_id)} />
+          <BiEditAlt style={{cursor: 'pointer', float: 'right'}} onClick={e => navigate(`/restaurant/${rest.rest_id}/edit`)} />
           {favRestaurants.includes(rest.rest_id) ?
-            <AiFillHeart style={{'color': 'red'}} onClick={e => updateFavRest(rest, 'delete')} />
+            <AiFillHeart style={{'color': 'red', cursor: 'pointer', marginLeft: '10px'}} onClick={e => updateFavRest(rest, 'delete')} />
             :
-            <AiOutlineHeart onClick={e => updateFavRest(rest, 'post')} />
+            <AiOutlineHeart style={{cursor: 'pointer', marginLeft: '10px'}} onClick={e => updateFavRest(rest, 'post')} />
           }
         </Card.Header>
         <Card.Body>
@@ -167,7 +171,7 @@ const Restaurants = () => {
   } else {
     return (
       <Container>
-        <p>View All Restaurants <AiOutlineFolderAdd onClick={handleShow} /> </p>
+        <p className='headline'>View All Restaurants <AiOutlineFolderAdd onClick={handleShow} style={{cursor: 'pointer'}}/> </p>
         <Pagination itemsPerPage={3} items={restaurants} layout={layout} />
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
@@ -193,7 +197,7 @@ const Restaurants = () => {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={addRest}>
+            <Button variant="info" onClick={addRest}>
               Add
             </Button>
           </Modal.Footer>
