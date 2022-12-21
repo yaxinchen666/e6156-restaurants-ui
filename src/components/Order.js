@@ -119,7 +119,7 @@ const Order = () => {
 
     return (
         <Container>
-            <p>Please order here:</p>
+            <p className='headline'>Please order here:</p>
             {dishItems}
             <Button className='mt-3' variant="outline-info" size="sm" onClick={submitOrder}>Submit Your Order</Button>
             <ToastContainer />

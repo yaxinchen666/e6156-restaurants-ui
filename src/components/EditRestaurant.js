@@ -4,6 +4,7 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Container } from 'react-bootstrap';
+import {toast, ToastContainer} from "react-toastify";
 
 const EditRestaurant = () => {
   const id = useParams().id
@@ -50,6 +51,7 @@ const EditRestaurant = () => {
           setRestName(rest_data.rest_name)
           setRestLoc(rest_data.rest_location)
           setRestSize(rest_data.rest_size)
+          toast.success("Updated successfully");
         }
       )
       .catch(
@@ -77,10 +79,11 @@ const EditRestaurant = () => {
               <Form.Label>Restaurant Size</Form.Label>
               <Form.Control value={restSize} onChange={e => setRestSize(e.target.value)} />
             </Form.Group>
-            <Button variant="primary" type="submit" onClick={submitChange}>
+            <Button variant="info" type="submit" onClick={submitChange}>
               Change
             </Button>
           </Form>
+          <ToastContainer />
         </Container>
       }
     </>
