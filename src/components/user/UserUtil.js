@@ -1,15 +1,14 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
-import {Link, useParams} from "react-router-dom";
-import Card from "react-bootstrap/Card";
+import {Link} from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import Cookies from "universal-cookie";
+import Container from "react-bootstrap/Container";
 
 // backend
-//export const USER_URL = 'http://3.89.63.117:5011/users';
-//export const ORDER_URL = 'http://cs6156order-env.eba-m5jcrnci.us-east-1.elasticbeanstalk.com/allOrderProfiles';
-export const LOGIN_URL = 'http://ec2-18-222-34-48.us-east-2.compute.amazonaws.com:5011/login'
+export const LOGIN_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/login'
 export const USER_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/users'
+export const USER_ORDERS_URL = 'https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/orderProfile/account'
 
 export const GOOGLE_CLIENT_ID = '432700070169-7eruhqjdadcqvmmh8ql54mij59vtpf5k.apps.googleusercontent.com'
 
@@ -69,7 +68,7 @@ export const getUser = async (setAccountId, setUser, setUserStatus) =>{
   }
 }
 
-export const UserItemsList = (data_endpoint, data_key, title, layout) => {
+export const UserItemsList = (get_data_url, data_key, title, layout) => {
   const [items, setItems] = useState([]);
   const [userStatus, setUserStatus] = useState(USER_STATUS.REQUEST_NOT_READY);
 
@@ -84,7 +83,7 @@ export const UserItemsList = (data_endpoint, data_key, title, layout) => {
       setUserStatus(USER_STATUS.NOT_LOGIN_ERR);
     } else {
       const accountId = cookies.get('id');
-      const data_url = USER_URL + '/' + accountId + '/' + data_endpoint;
+      const data_url = get_data_url(accountId);
       axios.get(data_url+
         '?page=' + curPage + '&per_page=' + itemsPerPage,
         {
@@ -145,7 +144,7 @@ export const UserItemsList = (data_endpoint, data_key, title, layout) => {
   }
 
   return (
-    <div>
+    <Container>
       {userStatus === USER_STATUS.REQUEST_NOT_READY ?
         ''
         :
@@ -167,7 +166,7 @@ export const UserItemsList = (data_endpoint, data_key, title, layout) => {
         subContainerClassName={'pages pagination'}
         activeClassName={'active'}
       />
-    </div>
+    </Container>
   );
 
 }

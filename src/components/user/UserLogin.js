@@ -34,7 +34,7 @@ const UserLogin = () => {
       .then(response => {
         if (response.status === 200) {
           cookies.set('token', credentialResponse.tokenId, {path: '/'});
-          cookies.set('id', jwt_decode(credentialResponse.tokenId)['sub']);
+          cookies.set('id', jwt_decode(credentialResponse.tokenId)['sub'], {path: '/'});
           toast.success("Login success.", {autoClose: 1000});
           setTimeout(() => {
             return navigate('/');

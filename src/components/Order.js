@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -13,6 +13,8 @@ const Order = () => {
     const [dishes, setDishes] = useState([])
     const [orders, setOrders] = useState([])
     const cookies = new Cookies();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get(`https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/restaurants/dishes/${rest_id}`)
@@ -71,6 +73,9 @@ const Order = () => {
                     console.log(res)
                     const numDishes = dishes.length;
                     setOrders(Array(numDishes).fill(0));
+                    setTimeout(() => {
+                      return navigate('/order-info/' + JSON.parse(/\{([^}]+)\}/.exec(res.data.data)[0]).data);
+                    }, 2000);
                 }
             )
             .catch(

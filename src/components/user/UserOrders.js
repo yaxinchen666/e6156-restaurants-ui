@@ -5,20 +5,30 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import './User.css'
 
-import {getUser, USER_URL, UserItemsList, UserNotFoundHTML} from './UserUtil';
-import Cookies from "universal-cookie";
+import {USER_ORDERS_URL, UserItemsList} from './UserUtil';
+import Container from "react-bootstrap/Container";
 
 const layout = (order) => {
   return (
-    <Card style={{ 'margin-bottom': '20px' }}>
-      <Card.Header as="h5">{order.OrderID}</Card.Header>
-    </Card>
+    <Container>
+      <Card style={{ 'margin-bottom': '20px' }}>
+        <Card.Body>
+          <Card.Text>
+            {/*{ | ${order.total}}*/}
+            {new Date(order.orderTime).toDateString()} | <Card.Link href={"/order-info/" + order.orderId}>Details</Card.Link>
+          </Card.Text>
+        </Card.Body>
+      </Card>
+    </Container>
   )
 };
 
 const UserOrders = () => {
-  return UserItemsList('UserOrders',
-    'Orders',
+  const get_data_url = (accountId) => {
+    return USER_ORDERS_URL + '/' + accountId;
+  }
+  return UserItemsList(get_data_url,
+    'data',
     'Orders',
     layout);
 }

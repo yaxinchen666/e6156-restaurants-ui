@@ -10,6 +10,7 @@ import UserOrders from './components/user/UserOrders';
 import UserFavoriteRestaurants from "./components/user/UserFavoriteRestaurants";
 import EditRestaurant from './components/EditRestaurant';
 import Order from './components/Order';
+import OrderInfo from "./components/OrderInfo";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/user/favorite-restaurants" element={<UserFavoriteRestaurants />} />
         <Route path="/restaurant/:id/edit" element={<EditRestaurant />} />
         <Route path="/order/:id" element={<Order />} />
+        <Route path="/order-info/:id" element={<OrderInfo />} />
       </Routes>
     </div>
   );
