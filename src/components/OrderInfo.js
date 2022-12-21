@@ -35,7 +35,7 @@ const OrderInfo = () => {
     if (cookies.get('id') === undefined) {
       setStatus(STATUS.AUTH_FAILED_ERR);
     } else {
-      axios.get('http://cs6156composite-env.eba-jpksptra.us-east-1.elasticbeanstalk.com/order/' + orderId, {
+      axios.get('https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/order/' + orderId, {
         headers: {
           'Authorization': cookies.get('token')
         }

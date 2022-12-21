@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -66,7 +66,7 @@ const Order = () => {
         }
         console.log(orderData)
         const accountId = cookies.get('id');
-        axios.post(`http://cs6156composite-env.eba-jpksptra.us-east-1.elasticbeanstalk.com/order/${accountId}`, orderData)
+        axios.post(`https://e3pejg5go6.execute-api.us-east-1.amazonaws.com/order/${accountId}`, orderData)
             .then(
                 res => {
                     toast.success('Order Submitted!')
@@ -108,6 +108,14 @@ const Order = () => {
             <p>No dishes from the restaurant so far!</p>
         </Container>
     );
+
+    if (cookies.get('id') === undefined) {
+      return (
+        <Container>
+          <p>You need to login first. <Link to="/user/login"> Log in </Link> </p>
+        </Container>
+      )
+    }
 
     return (
         <Container>
